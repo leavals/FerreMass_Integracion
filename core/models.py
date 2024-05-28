@@ -1,3 +1,4 @@
+# models.py
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.db.models import Sum, F
@@ -48,6 +49,7 @@ class Category(models.Model):
 class Product(models.Model):
     id_pro = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
+    marca = models.CharField(max_length=100, null=True, blank=True)  # Añadir el campo marca
     descripcion = models.TextField()
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField()

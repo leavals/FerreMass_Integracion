@@ -16,7 +16,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id_pro', 'nombre', 'descripcion', 'precio', 'stock', 'categories']
+        fields = ['id_pro', 'nombre', 'marca', 'descripcion', 'precio', 'stock', 'categories']
 
 class OrderItemSerializer(serializers.ModelSerializer):
     producto = ProductSerializer(read_only=True)
