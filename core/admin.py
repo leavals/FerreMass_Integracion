@@ -33,26 +33,16 @@ class CustomUserAdmin(BaseUserAdmin):
 
 admin.site.register(User, CustomUserAdmin)
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['id_cat', 'nombre', 'descripcion']
-
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ['id_pro', 'nombre', 'precio', 'stock']
-
-@admin.register(CategoryProduct)
-class CategoryProductAdmin(admin.ModelAdmin):
-    list_display = ['category', 'product']
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 1
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['id_ord', 'cliente', 'fecha_orden', 'total', 'estado']
+    inlines = [OrderItemInline]
 
-@admin.register(OrderItem)
-class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ['orden', 'producto', 'cantidad', 'precio']
-
-@admin.register(Payment)
-class PaymentAdmin(admin.ModelAdmin):
-    list_display = ['id_pay', 'orden', 'metodo', 'monto', 'confirmado']
+admin.site.register(Category)
+admin.site.register(Product)
+admin.site.register(CategoryProduct)
+admin.site.register(Payment)

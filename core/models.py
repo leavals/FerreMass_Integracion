@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.db.models import Sum, F
 
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
@@ -76,19 +77,29 @@ class Order(models.Model):
     cliente = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ordenes')
     productos = models.ManyToManyField(Product, through='OrderItem')
     fecha_orden = models.DateTimeField(auto_now_add=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     estado = models.CharField(max_length=50, choices=ESTADO_CHOICES)
     direccion_envio = models.CharField(max_length=255, null=True, blank=True)
     retiro_en_tienda = models.BooleanField(default=False)
+
+    def calculate_total(self):
+        total = self.items.aggregate(
+            total=Sum(F('cantidad') * F('producto__precio'))
+        )['total'] or 0
+        self.total = total
+        self.save()
 
     def __str__(self):
         return f'Orden {self.id_ord} - {self.cliente.username}'
 
 class OrderItem(models.Model):
-    orden = models.ForeignKey(Order, on_delete=models.CASCADE)
+    orden = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     producto = models.ForeignKey(Product, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.orden.calculate_total()
 
     def __str__(self):
         return f'{self.cantidad} x {self.producto.nombre} en {self.orden}'
@@ -100,6 +111,11 @@ class Payment(models.Model):
     monto = models.DecimalField(max_digits=10, decimal_places=2)
     confirmado = models.BooleanField(default=False)
     fecha_pago = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.monto:
+            self.monto = self.orden.total
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'Pago de {self.orden.id_ord} - {self.metodo}'
