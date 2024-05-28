@@ -15,3 +15,7 @@ class IsBodeguero(BasePermission):
 class IsContador(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role == 'contador'
+
+class IsVendedorOrBodeguero(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.role in ['vendedor', 'bodeguero']
