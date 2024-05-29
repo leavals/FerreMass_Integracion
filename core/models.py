@@ -1,4 +1,3 @@
-# models.py
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.db.models import Sum, F
@@ -49,7 +48,7 @@ class Category(models.Model):
 class Product(models.Model):
     id_pro = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
-    marca = models.CharField(max_length=100, null=True, blank=True)  # Añadir el campo marca
+    marca = models.CharField(max_length=100, null=True, blank=True)
     descripcion = models.TextField()
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField()
@@ -111,12 +110,15 @@ class Payment(models.Model):
     orden = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='pago')
     metodo = models.CharField(max_length=50, choices=[('debito', 'Débito'), ('credito', 'Crédito'), ('transferencia', 'Transferencia')])
     monto = models.DecimalField(max_digits=10, decimal_places=2)
-    confirmado = models.BooleanField(default=False)
+    confirmado = models.CharField(max_length=20, default='Por Pagar')  # Cambiado a CharField para manejar varios estados
     fecha_pago = models.DateTimeField(auto_now_add=True)
+    detalles = models.TextField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.monto:
             self.monto = self.orden.total
+        if not self.detalles:
+            self.detalles = f"Pago realizado con éxito. Monto: {self.monto} {self.metodo}."
         super().save(*args, **kwargs)
 
     def __str__(self):

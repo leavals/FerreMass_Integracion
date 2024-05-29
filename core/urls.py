@@ -8,7 +8,8 @@ from .views import (
     PaymentViewSet,
     UserViewSet,
     RegisterView,
-    UserDetailView
+    UserDetailView,
+    save_transaction
 )
 
 router = DefaultRouter()
@@ -21,6 +22,7 @@ router.register(r'users', UserViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('api/save-transaction/', save_transaction, name='save-transaction'),
     path('register/', RegisterView.as_view(), name='register'),
     path('user/', UserDetailView.as_view(), name='user-detail'),
 ]
