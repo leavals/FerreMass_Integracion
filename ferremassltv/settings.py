@@ -132,3 +132,26 @@ AUTHENTICATION_BACKENDS = (
 
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = True   # O específica los orígenes permitidos
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+PAYPAL_CLIENT_ID = 'AVmEJ_B9B4UCrcqsFZ6od_lErAoz7XKRdTdC_WLxRQYXzhNXRP9cpyB4ejALdZKq_NJsvZt9kQK1L1PZ'
+PAYPAL_CLIENT_SECRET = 'EC3wB1ugmV09h7BP7zX9sqmslejLPpIkwcZi-TInIVxVaKDig3cH-UGbS6-hBTER69kyjYuSm47AUTIG'
+PAYPAL_ENVIRONMENT = 'sandbox'  # o 'live' para producción

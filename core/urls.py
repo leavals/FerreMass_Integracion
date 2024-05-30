@@ -22,7 +22,7 @@ router.register(r'users', UserViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api/save-transaction/', save_transaction, name='save-transaction'),
+    path('save-transaction/', save_transaction, name='save-transaction'),  # Asegúrate de que esta línea sea correcta
     path('register/', RegisterView.as_view(), name='register'),
     path('user/', UserDetailView.as_view(), name='user-detail'),
 ]
